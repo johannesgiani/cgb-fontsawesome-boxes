@@ -8,7 +8,7 @@ import Box from './model';
 
 const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
-import { TextareaControl } from '@wordpress/components';
+import { TextareaControl, TextControl } from '@wordpress/components';
 
 /**
  * @link https://wordpress.org/gutenberg/handbook/block-api/
@@ -25,27 +25,33 @@ registerBlockType( 'cgb/block-fontsawesome-boxes', {
 		boxes: {
 			type: "array",
 			default: [
-				new Box('fas fa-handshake', 'Beratende Ingenieure und Architekten'),
-				new Box('fas fa-building', 'Sachverständige für das Bauwesen'),
-				new Box('fas fa-users', 'Mitglieder der Ingenieur- u. Architektenkammer'),
+				new Box(),
+				new Box(),
+				new Box(),
 			],
 		}
 	},
 
 	edit: function( props ) {
 
-		const onChangeText = ( text, index ) => {
+		const onChange = ( box, index ) => {
 			let newBoxes = [];
 			Object.assign(newBoxes, props.attributes.boxes);
-			newBoxes[index].text = text;
+			newBoxes[index] = box;
 			props.setAttributes({ boxes: newBoxes})
-		};
+		}
 
 		const boxes = props.attributes.boxes.map((box, index) =>
 			<li>
+				<TextControl
+					label="CSS-Klassen des Icons"
+					value={ box.iconClass }
+					onChange={ ( iconClass ) => onChange( new Box(iconClass, box.text), index ) }
+				/>
 				<TextareaControl
-					value={box.text}
-					onChange={ ( text ) => onChangeText( text, index ) }
+					label="Textinhalt"
+					value={ box.text }
+					onChange={ ( text ) => onChange( new Box(box.iconClass, text), index ) }
 				/>
 			</li>
 		);
